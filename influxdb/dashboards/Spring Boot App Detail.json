@@ -1,0 +1,4912 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": 3,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "panels": [],
+      "title": "Overview",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${influxdb}"
+      },
+      "description": "The \"recent cpu usage\" for the Java Virtual Machine process",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "displayName": "${__series.name}",
+          "mappings": [],
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 1
+      },
+      "id": 4,
+      "interval": "1m",
+      "maxDataPoints": 100,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"process_cpu_usage\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env:regex}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host:regex}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app:regex}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false, timeSrc: \"_start\")",
+          "refId": "process_cpu_usage"
+        }
+      ],
+      "title": "CPU%",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${influxdb}"
+      },
+      "description": "The percentage of used heap memory",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "displayName": "${__series.name}",
+          "mappings": [],
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 1
+      },
+      "id": 6,
+      "interval": "1m",
+      "maxDataPoints": 100,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_memory_max\" or r[\"_measurement\"] == \"jvm_memory_used\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env:regex}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host:regex}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app:regex}/)\n  |> filter(fn: (r) => r[\"area\"] == \"heap\")\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> map(fn: (r) => ({r with _value: if r._value < 0 then 0.0 else r._value}))\n  |> group(columns: [\"appName\",\"appEnv\",\"appHost\",\"_measurement\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false, timeSrc: \"_start\")\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_measurement\"], valueColumn: \"_value\")\n  |> map(fn: (r) => ({ r with _value: r.jvm_memory_used / r.jvm_memory_max}))\n  |> map(fn: (r) => ({ r with _measurement: \"jvm_heap_memory_pct\"}))\n  |> drop(columns: [\"jvm_memory_used\",\"jvm_memory_max\"])\n  |> group(columns: [\"appName\",\"appEnv\",\"appHost\",\"_measurement\"])",
+          "refId": "jvm_heap_memory_pct"
+        }
+      ],
+      "title": "Heap Memory%",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${influxdb}"
+      },
+      "description": "Time spent in GC pause",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "displayName": "${__series.name}",
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 1
+      },
+      "id": 8,
+      "interval": "1m",
+      "maxDataPoints": 100,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "sum",
+            "max"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_gc_pause\")\n  |> filter(fn: (r) => r[\"_field\"] == \"sum\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env:regex}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host:regex}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app:regex}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"histogram\")\n  |> group(columns: [\"appName\",\"appEnv\",\"appHost\",\"_measurement\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false, timeSrc: \"_start\")",
+          "refId": "jvm_gc_pause"
+        }
+      ],
+      "title": "GC Pause",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${influxdb}"
+      },
+      "description": "The current number of live threads including both daemon and non-daemon threads",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "displayName": "${__series.name}",
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 9
+      },
+      "id": 10,
+      "interval": "1m",
+      "maxDataPoints": 100,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_threads_live\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env:regex}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host:regex}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app:regex}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false, timeSrc: \"_start\")\n  |> toInt()",
+          "refId": "jvm_threads_live"
+        }
+      ],
+      "title": "Threads",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${influxdb}"
+      },
+      "description": "Rate of HTTP server request handling",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "displayName": "${__series.name} - rate",
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 9
+      },
+      "id": 12,
+      "interval": "1m",
+      "maxDataPoints": 100,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "sum",
+            "max"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"http_server_requests\")\n  |> filter(fn: (r) => r[\"_field\"] == \"count\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env:regex}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host:regex}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app:regex}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"histogram\")\n  |> group(columns: [\"appName\",\"appEnv\",\"appHost\",\"_measurement\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false, timeSrc: \"_start\")",
+          "refId": "http_server_requests"
+        }
+      ],
+      "title": "Request Rate",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${influxdb}"
+      },
+      "description": "Duration of HTTP server request handling",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "displayName": "${__series.name} - duration",
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 9
+      },
+      "id": 14,
+      "interval": "1m",
+      "maxDataPoints": 100,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "sum",
+            "max"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"http_server_requests\")\n  |> filter(fn: (r) => r[\"_field\"] == \"sum\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env:regex}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host:regex}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app:regex}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"histogram\")\n  |> group(columns: [\"appName\",\"appEnv\",\"appHost\",\"_measurement\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false, timeSrc: \"_start\")",
+          "refId": "http_server_requests"
+        }
+      ],
+      "title": "Request Duration",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 17
+      },
+      "id": 75,
+      "panels": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "The maximum amount of memory in bytes that can be used for memory management",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "blue",
+                "mode": "fixed"
+              },
+              "displayName": "${__field.labels.id}",
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "dark-blue",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "_value"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Total"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 16,
+            "w": 4,
+            "x": 0,
+            "y": 18
+          },
+          "id": 144,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "9.5.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_memory_max\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"area\"] == \"heap\")\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> map(fn: (r) => ({r with _value: if r._value < 0 then 0.0 else r._value}))\n  |> last()\n  |> group(columns: [\"appName\",\"appEnv\",\"appHost\",\"_measurement\"])\n  |> sum()",
+              "refId": "jvm_memory_max"
+            },
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "hide": false,
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_memory_max\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"area\"] == \"heap\")\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> map(fn: (r) => ({r with _value: if r._value < 0 then 0.0 else r._value}))\n  |> last()\n",
+              "refId": "B"
+            }
+          ],
+          "title": "Heap Memory Max",
+          "transparent": true,
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "The amount of used memory",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "displayName": "${__field.labels.id}",
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "#ffffff",
+                      "mode": "fixed"
+                    }
+                  },
+                  {
+                    "id": "displayName",
+                    "value": "Total"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 20,
+            "x": 4,
+            "y": 18
+          },
+          "id": 141,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "sortBy": "Mean",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_memory_used\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"area\"] == \"heap\")\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> map(fn: (r) => ({r with _value: if r._value < 0 then 0.0 else r._value}))\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false, timeSrc: \"_start\")",
+              "refId": "jvm_memory_used"
+            },
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "hide": false,
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_memory_used\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"area\"] == \"heap\")\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false, timeSrc: \"_start\")\n  |> group(columns: [\"appName\",\"appEnv\",\"appHost\",\"_measurement\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false, timeSrc: \"_start\")",
+              "refId": "B"
+            }
+          ],
+          "title": "Heap Memory Used",
+          "transparent": true,
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "The amount of memory in bytes that is committed for the Java virtual machine to use",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "displayName": "${__field.labels.id}",
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Total"
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "#fbfbfb",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 20,
+            "x": 4,
+            "y": 26
+          },
+          "id": 79,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "sortBy": "Mean",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_memory_committed\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"area\"] == \"heap\")\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false, timeSrc: \"_start\")",
+              "refId": "jvm_memory_committed"
+            },
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "hide": false,
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_memory_committed\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"area\"] == \"heap\")\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false, timeSrc: \"_start\")\n  |> group(columns: [\"appName\",\"appEnv\",\"appHost\",\"_measurement\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false, timeSrc: \"_start\")",
+              "refId": "B"
+            }
+          ],
+          "title": "Heap Memory Committed",
+          "transparent": true,
+          "type": "timeseries"
+        }
+      ],
+      "title": "JVM Heap Memory",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      },
+      "id": 150,
+      "panels": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "The percentage of long-lived heap pool used after the last GC event",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "displayName": "${__field.labels.pool}",
+              "mappings": [],
+              "max": 1,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percentunit"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 19
+          },
+          "id": 81,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "sortBy": "Mean",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_memory_usage_after_gc\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"area\"] == \"heap\")\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false, timeSrc: \"_start\")",
+              "refId": "jvm_memory_usage_after_gc"
+            }
+          ],
+          "title": "Heap Memory Usage after GC",
+          "transparent": true,
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "An approximation of the percent of CPU time used by GC activities over the last lookback period or since monitoring began, whichever is shorter",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "displayName": "${__series.name}",
+              "mappings": [],
+              "max": 1,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percentunit"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 19
+          },
+          "id": 99,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "max"
+              ],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_gc_overhead\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false, timeSrc: \"_start\")",
+              "refId": "jvm_gc_overhead"
+            }
+          ],
+          "title": "GC Overhead",
+          "transparent": true,
+          "type": "timeseries"
+        }
+      ],
+      "title": "JVM Heap Pressure",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 19
+      },
+      "id": 143,
+      "panels": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "The maximum amount of memory in bytes that can be used for memory management",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "blue",
+                "mode": "fixed"
+              },
+              "displayName": "${__field.labels.id}",
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "dark-blue"
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "_value"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Total"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 16,
+            "w": 4,
+            "x": 0,
+            "y": 20
+          },
+          "id": 145,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "9.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_memory_max\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"area\"] == \"nonheap\")\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> map(fn: (r) => ({r with _value: if r._value < 0 then 0.0 else r._value}))\n  |> last()\n  |> group(columns: [\"appName\",\"appEnv\",\"appHost\",\"_measurement\"])\n  |> sum()",
+              "refId": "jvm_memory_max"
+            },
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "hide": false,
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_memory_max\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"area\"] == \"nonheap\")\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> map(fn: (r) => ({r with _value: if r._value < 0 then 0.0 else r._value}))\n  |> last()\n",
+              "refId": "B"
+            }
+          ],
+          "title": "Non-Heap Memory Max",
+          "transparent": true,
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "The amount of used memory",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "displayName": "${__field.labels.id}",
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "#ffffff",
+                      "mode": "fixed"
+                    }
+                  },
+                  {
+                    "id": "displayName",
+                    "value": "Total"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 20,
+            "x": 4,
+            "y": 20
+          },
+          "id": 146,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "sortBy": "Mean",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_memory_used\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"area\"] == \"nonheap\")\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> map(fn: (r) => ({r with _value: if r._value < 0 then 0.0 else r._value}))\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false, timeSrc: \"_start\")",
+              "refId": "jvm_memory_used"
+            },
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "hide": false,
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_memory_used\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"area\"] == \"nonheap\")\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false, timeSrc: \"_start\")\n  |> group(columns: [\"appName\",\"appEnv\",\"appHost\",\"_measurement\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false, timeSrc: \"_start\")",
+              "refId": "B"
+            }
+          ],
+          "title": "Non-Heap Memory Used",
+          "transparent": true,
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "The amount of memory in bytes that is committed for the Java virtual machine to use",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "displayName": "${__field.labels.id}",
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Total"
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "#fbfbfb",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 20,
+            "x": 4,
+            "y": 28
+          },
+          "id": 147,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "sortBy": "Mean",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_memory_committed\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"area\"] == \"nonheap\")\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false, timeSrc: \"_start\")",
+              "refId": "jvm_memory_committed"
+            },
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "hide": false,
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_memory_committed\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"area\"] == \"nonheap\")\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false, timeSrc: \"_start\")\n  |> group(columns: [\"appName\",\"appEnv\",\"appHost\",\"_measurement\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false, timeSrc: \"_start\")",
+              "refId": "B"
+            }
+          ],
+          "title": "Non-Heap Memory Committed",
+          "transparent": true,
+          "type": "timeseries"
+        }
+      ],
+      "title": "JVM Non-Heap Memory",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 20
+      },
+      "id": 89,
+      "panels": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "Time spent in GC pause",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "displayName": "${__field.labels.cause} - ${__field.labels.action}",
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "ms"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Total"
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "#ffffff",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 21
+          },
+          "id": 91,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "sum",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "sortBy": "Total",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "hide": false,
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_gc_pause\")\n  |> filter(fn: (r) => r[\"_field\"] == \"sum\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"histogram\")\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false, timeSrc: \"_start\")\n  |> group(columns: [\"appName\",\"appEnv\",\"appHost\",\"_measurement\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false, timeSrc: \"_start\")",
+              "refId": "total duration"
+            },
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_gc_pause\")\n  |> filter(fn: (r) => r[\"_field\"] == \"sum\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"histogram\")\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false, timeSrc: \"_start\")",
+              "refId": "duration"
+            }
+          ],
+          "title": "GC Pause Duration",
+          "transparent": true,
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "Amount of GC pause",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "displayName": "${__field.labels.cause} - ${__field.labels.action}",
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Value"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Total"
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "#ffffff",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 21
+          },
+          "id": 93,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "sum",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "sortBy": "Total",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_gc_pause\")\n  |> filter(fn: (r) => r[\"_field\"] == \"count\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"histogram\")\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false, timeSrc: \"_start\")\n  |> group(columns: [\"appName\",\"appEnv\",\"appHost\",\"_measurement\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false, timeSrc: \"_start\")",
+              "refId": "total count"
+            },
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "hide": false,
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_gc_pause\")\n  |> filter(fn: (r) => r[\"_field\"] == \"count\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"histogram\")\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false, timeSrc: \"_start\")",
+              "refId": "count"
+            }
+          ],
+          "title": "GC Pause Count",
+          "transparent": true,
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "Allocated - Incremented for an increase in the size of the (young) heap memory pool after one GC to before the next <br>\nPromoted - Count of positive increases in the size of the old generation memory pool before GC to after GC",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "displayName": "${__series.name}",
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 29
+          },
+          "id": 95,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "sum",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "sortBy": "Total",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_gc_memory_allocated\" or r[\"_measurement\"] == \"jvm_gc_memory_promoted\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"counter\")\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false, timeSrc: \"_start\")",
+              "refId": "allocated/promoted"
+            }
+          ],
+          "title": "GC Mem Allocated / Promoted",
+          "transparent": true,
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "Live - Size of long-lived heap memory pool after reclamation <br>\nMax - Max size of long-lived heap memory pool",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "displayName": "${__series.name}",
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 29
+          },
+          "id": 97,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "sortBy": "Mean",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_gc_live_data_size\" or r[\"_measurement\"] == \"jvm_gc_max_data_size\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false, timeSrc: \"_start\")",
+              "refId": "live/max"
+            }
+          ],
+          "title": "GC Data Size",
+          "transparent": true,
+          "type": "timeseries"
+        }
+      ],
+      "title": "JVM Garbage Collector",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 21
+      },
+      "id": 101,
+      "panels": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "The current number of threads by state",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "displayName": "${__field.labels.state}",
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 22
+          },
+          "id": 103,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "sortBy": "Mean",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_threads_states\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false, timeSrc: \"_start\")\n  |> toInt()",
+              "refId": "jvm_threads_states"
+            }
+          ],
+          "title": "Thread States",
+          "transparent": true,
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "The current number of live daemon threads",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "displayName": "${__series.name}",
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 22
+          },
+          "id": 105,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "max"
+              ],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_threads_daemon\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false, timeSrc: \"_start\")\n  |> toInt()",
+              "refId": "jvm_threads_daemon"
+            }
+          ],
+          "title": "Daemon Threads",
+          "transparent": true,
+          "type": "timeseries"
+        }
+      ],
+      "title": "JVM Threads",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 22
+      },
+      "id": 152,
+      "panels": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "Rate of HTTP server request handling",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "displayName": "${__field.labels.method} - ${__field.labels.uri}",
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 23
+          },
+          "id": 153,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "sum",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "sortBy": "Total",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"http_server_requests\")\n  |> filter(fn: (r) => r[\"_field\"] == \"count\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env:regex}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host:regex}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app:regex}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"histogram\")\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false, timeSrc: \"_start\")",
+              "refId": "http_server_requests"
+            }
+          ],
+          "title": "Request Rate",
+          "transparent": true,
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "Duration of HTTP server request handling",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "displayName": "${__field.labels.method} - ${__field.labels.uri}",
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "ms"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 23
+          },
+          "id": 154,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "sum",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "sortBy": "Total",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"http_server_requests\")\n  |> filter(fn: (r) => r[\"_field\"] == \"sum\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env:regex}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host:regex}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app:regex}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"histogram\")\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false, timeSrc: \"_start\")",
+              "refId": "http_server_requests"
+            }
+          ],
+          "title": "Request Duration",
+          "transparent": true,
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "Rate of HTTP server request handling",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "displayName": "${__field.labels.status} - ${__field.labels.uri}",
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 31
+          },
+          "id": 155,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "sum",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "sortBy": "Total",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"http_server_requests\")\n  |> filter(fn: (r) => r[\"_field\"] == \"count\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env:regex}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host:regex}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app:regex}/)\n  |> filter(fn: (r) => r[\"status\"] >= \"400\")\n  |> filter(fn: (r) => r[\"metric_type\"] == \"histogram\")\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false, timeSrc: \"_start\")",
+              "refId": "http_server_requests"
+            }
+          ],
+          "title": "Error Request Rate",
+          "transparent": true,
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "Duration of HTTP server request handling",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "displayName": "${__field.labels.status} - ${__field.labels.uri}",
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 31
+          },
+          "id": 156,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "sum",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "sortBy": "Total",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"http_server_requests\")\n  |> filter(fn: (r) => r[\"_field\"] == \"sum\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env:regex}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host:regex}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app:regex}/)\n  |> filter(fn: (r) => r[\"status\"] >= \"400\")\n  |> filter(fn: (r) => r[\"metric_type\"] == \"histogram\")\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false, timeSrc: \"_start\")",
+              "refId": "http_server_requests"
+            }
+          ],
+          "title": "Error Request Duration",
+          "transparent": true,
+          "type": "timeseries"
+        }
+      ],
+      "title": "Requests",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 23
+      },
+      "id": 107,
+      "panels": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "An estimate of the total capacity of the buffers in this pool",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "displayName": "${__field.labels.id}",
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "blue"
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 16,
+            "w": 4,
+            "x": 0,
+            "y": 23
+          },
+          "id": 109,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "9.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_buffer_total_capacity\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> last()",
+              "refId": "jvm_buffer_total_capacity"
+            }
+          ],
+          "title": "JVM Buffer Total Capacity",
+          "transparent": true,
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "An estimate of the number of buffers in the pool",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "displayName": "${__field.labels.id}",
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 20,
+            "x": 4,
+            "y": 23
+          },
+          "id": 111,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "sortBy": "Mean",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_buffer_count\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false, timeSrc: \"_start\")",
+              "refId": "jvm_buffer_count"
+            }
+          ],
+          "title": "JVM Buffer Count",
+          "transparent": true,
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "An estimate of the memory that the Java virtual machine is using for this buffer pool",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "displayName": "${__field.labels.id}",
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 20,
+            "x": 4,
+            "y": 31
+          },
+          "id": 113,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "sortBy": "Mean",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_buffer_memory_used\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false, timeSrc: \"_start\")",
+              "refId": "jvm_buffer_memory_used"
+            }
+          ],
+          "title": "JVM Buffer Memory Usage",
+          "transparent": true,
+          "type": "timeseries"
+        }
+      ],
+      "title": "JVM Buffer",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 24
+      },
+      "id": 127,
+      "panels": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "The maximum allowed number of threads in the pool",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "blue",
+                "mode": "fixed"
+              },
+              "displayName": "${__field.labels.name}",
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 4,
+            "x": 0,
+            "y": 24
+          },
+          "id": 131,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "vertical",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "9.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"executor_pool_max\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> last()",
+              "refId": "executor_pool_max"
+            }
+          ],
+          "title": "Pool Core Max",
+          "transparent": true,
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "The current number of threads in the pool",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "displayName": "${__field.labels.name}",
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 10,
+            "x": 4,
+            "y": 24
+          },
+          "id": 132,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "sortBy": "Mean",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"executor_pool_size\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false, timeSrc: \"_start\")",
+              "refId": "executor_pool_size"
+            }
+          ],
+          "title": "Pool Size",
+          "transparent": true,
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "The core number of threads for the pool",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "displayName": "${__field.labels.name}",
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 10,
+            "x": 14,
+            "y": 24
+          },
+          "id": 130,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "sortBy": "Mean",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"executor_pool_core\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false, timeSrc: \"_start\")",
+              "refId": "executor_pool_core"
+            }
+          ],
+          "title": "Pool Core",
+          "transparent": true,
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "The approximate total number of tasks that have completed execution",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "blue",
+                "mode": "fixed"
+              },
+              "displayName": "${__field.labels.name}",
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 4,
+            "x": 0,
+            "y": 32
+          },
+          "id": 129,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "9.3.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"executor_completed\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"counter\")\n  |> last()",
+              "refId": "executor_completed"
+            }
+          ],
+          "title": "Completed",
+          "transparent": true,
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "Active - The approximate number of threads that are actively executing tasks <br>\nQueued - The approximate number of tasks that are queued for execution",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "displayName": "${__series.name} - ${__field.labels.name}",
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 10,
+            "x": 4,
+            "y": 32
+          },
+          "id": 128,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "sortBy": "Mean",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"executor_active\" or r[\"_measurement\"] == \"executor_queued\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false, timeSrc: \"_start\")",
+              "refId": "active/queued"
+            }
+          ],
+          "title": "Active / Queued",
+          "transparent": true,
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "The number of additional elements that this queue can ideally accept without blocking",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "displayName": "${__field.labels.name}",
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 10,
+            "x": 14,
+            "y": 32
+          },
+          "id": 133,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "sortBy": "Mean",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"executor_queue_remaining\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false, timeSrc: \"_start\")",
+              "refId": "executor_queue_remaining"
+            }
+          ],
+          "title": "Queue Remaining",
+          "transparent": true,
+          "type": "timeseries"
+        }
+      ],
+      "title": "Executor",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 25
+      },
+      "id": 137,
+      "panels": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "blue",
+                "mode": "fixed"
+              },
+              "displayName": "${__series.name}",
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 4,
+            "x": 0,
+            "y": 50
+          },
+          "id": 151,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "9.5.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "hide": false,
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tomcat_sessions_active_max\" or r[\"_measurement\"] == \"tomcat_sessions_alive_max\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> last()",
+              "refId": "active/alive"
+            }
+          ],
+          "title": "Max",
+          "transparent": true,
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "displayName": "${__series.name}",
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 4,
+            "y": 50
+          },
+          "id": 138,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "max"
+              ],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tomcat_sessions_active_current\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false, timeSrc: \"_start\")",
+              "refId": "tomcat_sessions_active_current"
+            }
+          ],
+          "title": "Active Current",
+          "transparent": true,
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "displayName": "${__series.name}",
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 50
+          },
+          "id": 139,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "sum",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "sortBy": "Total",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"tomcat_sessions_rejected\" or r[\"_measurement\"] == \"tomcat_sessions_expired\" or r[\"_measurement\"] == \"tomcat_sessions_created\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"counter\")\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false, timeSrc: \"_start\")",
+              "refId": "rejected/expired/created"
+            }
+          ],
+          "title": "Created / Expired / Rejected",
+          "transparent": true,
+          "type": "timeseries"
+        }
+      ],
+      "title": "Tomcat",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 26
+      },
+      "id": 115,
+      "panels": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "blue",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "dateTimeAsUS"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 4,
+            "x": 0,
+            "y": 27
+          },
+          "id": 71,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": true
+            },
+            "textMode": "value"
+          },
+          "pluginVersion": "9.5.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "from(bucket: \"event\")\n  |> range(start: -30d, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"appStart\")\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app:regex}/)\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env:regex}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host:regex}/)\n  |> filter(fn: (r) => r[\"_field\"] == \"appStartTimestamp\")\n  |> last()\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> drop(columns: [\"_start\",\"_stop\",\"_time\",\"_field\",\"metric_type\"])",
+              "refId": "appStartTimestamp"
+            }
+          ],
+          "title": "Start Time",
+          "transformations": [],
+          "transparent": true,
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "The uptime of the Java virtual machine",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "blue",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "ms"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 4,
+            "x": 4,
+            "y": 27
+          },
+          "id": 73,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": true
+            },
+            "textMode": "value"
+          },
+          "pluginVersion": "9.5.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"process_uptime\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> last()",
+              "refId": "process_uptime"
+            }
+          ],
+          "title": "Uptime",
+          "transformations": [],
+          "transparent": true,
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "blue",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "string"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 4,
+            "x": 8,
+            "y": 27
+          },
+          "id": 135,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "/.*/",
+              "values": false
+            },
+            "textMode": "value"
+          },
+          "pluginVersion": "9.5.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "from(bucket: \"event\")\n  |> range(start: -30d, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"appStart\")\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app:regex}/)\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env:regex}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host:regex}/)\n  |> filter(fn: (r) => r[\"_field\"] == \"javaVersion\")\n  |> last()\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> drop(columns: [\"_start\",\"_stop\",\"_time\",\"_field\",\"metric_type\"])",
+              "refId": "javaVersion"
+            }
+          ],
+          "title": "JVM Version",
+          "transformations": [],
+          "transparent": true,
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "blue",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "string"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 4,
+            "x": 12,
+            "y": 27
+          },
+          "id": 140,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "/.*/",
+              "values": false
+            },
+            "textMode": "value"
+          },
+          "pluginVersion": "9.5.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "from(bucket: \"event\")\n  |> range(start: -30d, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"appStart\")\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app:regex}/)\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env:regex}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host:regex}/)\n  |> filter(fn: (r) => r[\"_field\"] == \"buildVersion\")\n  |> last()\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> drop(columns: [\"_start\",\"_stop\",\"_time\",\"_field\",\"metric_type\"])",
+              "refId": "buildVersion"
+            }
+          ],
+          "title": "Build Version",
+          "transformations": [],
+          "transparent": true,
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "Time taken (ms) for the application to be ready to service requests",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "blue",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "ms"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 2,
+            "x": 16,
+            "y": 27
+          },
+          "id": 67,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "9.5.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "from(bucket: \"event\")\n  |> range(start: -30d, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"appStart\")\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app:regex}/)\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env:regex}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host:regex}/)\n  |> filter(fn: (r) => r[\"_field\"] == \"appReadyTime\")\n  |> last()\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> drop(columns: [\"_start\",\"_stop\",\"_time\",\"_field\",\"metric_type\"])",
+              "refId": "appReadyTime"
+            }
+          ],
+          "title": "Ready Time",
+          "transparent": true,
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "The maximum amount of memory in bytes that can be used for memory management",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "blue",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "decbytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 4,
+            "w": 2,
+            "x": 18,
+            "y": 27
+          },
+          "id": 69,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "9.5.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "from(bucket: \"app\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_memory_max\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> map(fn: (r) => ({r with _value: if r._value < 0 then 0.0 else r._value}))\n  |> last()\n  |> group(columns: [\"appName\",\"appEnv\",\"appHost\",\"_measurement\"])\n  |> sum(column: \"_value\")",
+              "refId": "jvm_memory_max"
+            }
+          ],
+          "title": "Max Memory",
+          "transparent": true,
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "The number of classes that are currently loaded in the Java virtual machine",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "displayName": "${__series.name}",
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 0,
+            "y": 31
+          },
+          "id": 117,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "max"
+              ],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_classes_loaded\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false, timeSrc: \"_start\")",
+              "refId": "jvm_classes_loaded"
+            }
+          ],
+          "title": "JVM Classes Loaded",
+          "transparent": true,
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "The total number of classes unloaded since the Java virtual machine has started execution",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "displayName": "${__series.name}",
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 8,
+            "y": 31
+          },
+          "id": 119,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "sum",
+                "max"
+              ],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_classes_unloaded\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"counter\")\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false, timeSrc: \"_start\")",
+              "refId": "jvm_classes_unloaded"
+            }
+          ],
+          "title": "JVM Classes Unloaded",
+          "transparent": true,
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "The open file descriptor count",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "displayName": "${__series.name}",
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 16,
+            "y": 31
+          },
+          "id": 123,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "sortBy": "Mean",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"process_files_max\" or r[\"_measurement\"] == \"process_files_open\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false, timeSrc: \"_start\")\n  |> toInt()",
+              "refId": "max/open"
+            }
+          ],
+          "title": "Process Files",
+          "transparent": true,
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "The approximate accumulated elapsed time spent in compilation",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "displayName": "${__field.labels.compiler}",
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "ms"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 39
+          },
+          "id": 125,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "sum",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "sortBy": "Total",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_compilation_time\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"counter\")\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false, timeSrc: \"_start\")",
+              "refId": "jvm_compilation_time"
+            }
+          ],
+          "title": "JVM Compilation Time",
+          "transparent": true,
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "description": "Number of events that made it to the logs",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "always",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "displayName": "${__field.labels.level}",
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "info"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "green",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "debug"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "blue",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "trace"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "purple",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "warn"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "yellow",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "error"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "red",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 39
+          },
+          "id": 121,
+          "interval": "1m",
+          "maxDataPoints": 100,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "sum",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "sortBy": "Total",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "${influxdb}"
+              },
+              "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"logback_events\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"counter\")\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false, timeSrc: \"_start\")",
+              "refId": "logback_events"
+            }
+          ],
+          "title": "Logback Events",
+          "transparent": true,
+          "type": "timeseries"
+        }
+      ],
+      "title": "Misc",
+      "type": "row"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "InfluxDB",
+          "value": "InfluxDB"
+        },
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "influxdb",
+        "options": [],
+        "query": "influxdb",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": "movie-service-sb",
+          "value": "movie-service-sb"
+        },
+        "datasource": {
+          "type": "influxdb",
+          "uid": "${influxdb}"
+        },
+        "definition": "import \"influxdata/influxdb/schema\"\n\nschema.tagValues(\n  bucket: \"app\",\n  tag: \"appName\",\n  predicate: (r) => r[\"appName\"] =~ /.*-sb/\n)",
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "app",
+        "options": [],
+        "query": "import \"influxdata/influxdb/schema\"\n\nschema.tagValues(\n  bucket: \"app\",\n  tag: \"appName\",\n  predicate: (r) => r[\"appName\"] =~ /.*-sb/\n)",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "dev",
+          "value": "dev"
+        },
+        "datasource": {
+          "type": "influxdb",
+          "uid": "${influxdb}"
+        },
+        "definition": "import \"influxdata/influxdb/schema\"\n\nschema.tagValues(\n  bucket: \"app\",\n  tag: \"appEnv\",\n  predicate: (r) => r[\"appName\"] =~ /${app:regex}/\n)",
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "env",
+        "options": [],
+        "query": "import \"influxdata/influxdb/schema\"\n\nschema.tagValues(\n  bucket: \"app\",\n  tag: \"appEnv\",\n  predicate: (r) => r[\"appName\"] =~ /${app:regex}/\n)",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "docker-local",
+          "value": "docker-local"
+        },
+        "datasource": {
+          "type": "influxdb",
+          "uid": "${influxdb}"
+        },
+        "definition": "import \"influxdata/influxdb/schema\"\n\nschema.tagValues(\n  bucket: \"app\",\n  tag: \"appHost\",\n  predicate: (r) => r[\"appName\"] =~ /${app:regex}/ and r[\"appEnv\"] =~ /${env:regex}/\n)",
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "host",
+        "options": [],
+        "query": "import \"influxdata/influxdb/schema\"\n\nschema.tagValues(\n  bucket: \"app\",\n  tag: \"appHost\",\n  predicate: (r) => r[\"appName\"] =~ /${app:regex}/ and r[\"appEnv\"] =~ /${env:regex}/\n)",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "2023-05-20T17:00:00.000Z",
+    "to": "2023-05-20T18:00:00.000Z"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Spring Boot App Detail",
+  "uid": "springBootAppDetail",
+  "version": 44,
+  "weekStart": ""
+}

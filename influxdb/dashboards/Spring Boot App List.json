@@ -1,0 +1,353 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": 1,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${influxdb}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "appStartTimestamp"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeAsLocal"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "process_uptime"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "appName"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "Overview Metrics",
+                    "url": "http://localhost:3000/d/springBootAppOverview/spring-boot-app-overview?orgId=1&${influxdb:queryparam}&var-app=${__value.text}&var-env=${__data.fields[\"App Env\"]}&var-host=${__data.fields[\"App Host\"]}&${__url_time_range}"
+                  },
+                  {
+                    "targetBlank": true,
+                    "title": "Detail Metrics",
+                    "url": "http://localhost:3000/d/springBootAppDetail/spring-boot-app-detail?orgId=1&${influxdb:queryparam}&var-app=${__value.text}&var-env=${__data.fields[\"App Env\"]}&var-host=${__data.fields[\"App Host\"]}&${__url_time_range}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 25,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "9.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "query": "from(bucket: \"app\")\n  |> range(start: -5m, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"process_uptime\")\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app:regex}/)\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env:regex}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host:regex}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> last()\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_measurement\"], valueColumn: \"_value\")\n  |> drop(columns: [\"_start\",\"_stop\",\"_time\",\"_field\",\"metric_type\"])",
+          "refId": "process_uptime"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "hide": false,
+          "query": "from(bucket: \"event\")\n  |> range(start: -30d, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"appStart\")\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app:regex}/)\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env:regex}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host:regex}/)\n  |> filter(fn: (r) => r[\"_field\"] == \"appStartTimestamp\" or r[\"_field\"] == \"appReadyTime\" or r[\"_field\"] == \"buildVersion\" or r[\"_field\"] == \"javaVersion\")\n  |> last()\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> drop(columns: [\"_start\",\"_stop\",\"_time\",\"_field\",\"metric_type\"])",
+          "refId": "appStart"
+        }
+      ],
+      "title": "Application List",
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {
+            "mode": "columns"
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "appEnv": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "appHost": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "appName": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "appStartTimestamp": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "buildVersion": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "javaVersion": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "process_start_time": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "process_uptime": {
+                "aggregations": [],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {
+              "appEnv": 1,
+              "appHost": 2,
+              "appName": 0,
+              "appStartTimestamp": 5,
+              "buildVersion": 3,
+              "javaVersion": 4,
+              "process_uptime": 6
+            },
+            "renameByName": {
+              "appEnv": "App Env",
+              "appHost": "App Host",
+              "appName": "App Name",
+              "appStartTimestamp": "Last Start Time",
+              "buildVersion": "Build Version",
+              "javaVersion": "JVM Version",
+              "process_start_time": "Last Start Time",
+              "process_uptime": "Uptime"
+            }
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "table"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "InfluxDB",
+          "value": "InfluxDB"
+        },
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "influxdb",
+        "options": [],
+        "query": "influxdb",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "allValue": ".*-sb",
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "influxdb",
+          "uid": "${influxdb}"
+        },
+        "definition": "import \"influxdata/influxdb/schema\"\n\nschema.tagValues(\n  bucket: \"app\",\n  tag: \"appName\",\n  predicate: (r) => r[\"appName\"] =~ /.*-sb/\n)",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "app",
+        "options": [],
+        "query": "import \"influxdata/influxdb/schema\"\n\nschema.tagValues(\n  bucket: \"app\",\n  tag: \"appName\",\n  predicate: (r) => r[\"appName\"] =~ /.*-sb/\n)",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "influxdb",
+          "uid": "${influxdb}"
+        },
+        "definition": "import \"influxdata/influxdb/schema\"\n\nschema.tagValues(\n  bucket: \"app\",\n  tag: \"appEnv\",\n  predicate: (r) => r[\"appName\"] =~ /${app:regex}/\n)",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "env",
+        "options": [],
+        "query": "import \"influxdata/influxdb/schema\"\n\nschema.tagValues(\n  bucket: \"app\",\n  tag: \"appEnv\",\n  predicate: (r) => r[\"appName\"] =~ /${app:regex}/\n)",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "influxdb",
+          "uid": "${influxdb}"
+        },
+        "definition": "import \"influxdata/influxdb/schema\"\n\nschema.tagValues(\n  bucket: \"app\",\n  tag: \"appHost\",\n  predicate: (r) => r[\"appName\"] =~ /${app:regex}/ and r[\"appEnv\"] =~ /${env:regex}/\n)",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "host",
+        "options": [],
+        "query": "import \"influxdata/influxdb/schema\"\n\nschema.tagValues(\n  bucket: \"app\",\n  tag: \"appHost\",\n  predicate: (r) => r[\"appName\"] =~ /${app:regex}/ and r[\"appEnv\"] =~ /${env:regex}/\n)",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-5m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Spring Boot App List",
+  "uid": "springBootAppList",
+  "version": 11,
+  "weekStart": ""
+}

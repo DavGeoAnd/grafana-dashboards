@@ -1,0 +1,795 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": 2,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${influxdb}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "displayName": "${__field.labels.appName}_${__field.labels.appEnv}_${__field.labels.appHost}",
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "Detail Metrics",
+              "url": "http://localhost:3000/d/springBootAppDetail/spring-boot-app-detail?orgId=1&${influxdb:queryparam}&var-app=${__field.labels.appName}&var-env=${__field.labels.appEnv}&var-host=${__field.labels.appHost}&${__url_time_range}"
+            }
+          ],
+          "mappings": [],
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 18,
+      "interval": "1m",
+      "maxDataPoints": 100,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "sortBy": "Mean",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"process_cpu_usage\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env:regex}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host:regex}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app:regex}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false, timeSrc: \"_start\")",
+          "refId": "process_cpu_usage"
+        }
+      ],
+      "title": "CPU%",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${influxdb}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "displayName": "${__field.labels.appName} : ${__field.labels.appEnv} : ${__field.labels.appHost}",
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "Detail Metrics",
+              "url": "http://localhost:3000/d/springBootAppDetail/spring-boot-app-detail?orgId=1&${influxdb:queryparam}&var-app=${__field.labels.appName}&var-env=${__field.labels.appEnv}&var-host=${__field.labels.appHost}&${__url_time_range}"
+            }
+          ],
+          "mappings": [],
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 9,
+      "interval": "1m",
+      "maxDataPoints": 100,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "sortBy": "Mean",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_memory_max\" or r[\"_measurement\"] == \"jvm_memory_used\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env:regex}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host:regex}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app:regex}/)\n  |> filter(fn: (r) => r[\"area\"] == \"heap\")\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> map(fn: (r) => ({r with _value: if r._value < 0 then 0.0 else r._value}))\n  |> group(columns: [\"appName\",\"appEnv\",\"appHost\",\"_measurement\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false, timeSrc: \"_start\")\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_measurement\"], valueColumn: \"_value\")\n  |> map(fn: (r) => ({ r with _value: r.jvm_memory_used / r.jvm_memory_max}))\n  |> map(fn: (r) => ({ r with _measurement: \"jvm_heap_memory_pct\"}))\n  |> drop(columns: [\"jvm_memory_used\",\"jvm_memory_max\"])\n  |> group(columns: [\"appName\",\"appEnv\",\"appHost\",\"_measurement\"])",
+          "refId": "jvm_heap_memory_pct"
+        }
+      ],
+      "title": "Heap Memory%",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${influxdb}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "displayName": "${__field.labels.appName} : ${__field.labels.appEnv} : ${__field.labels.appHost}",
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "Detail Metrics",
+              "url": "http://localhost:3000/d/springBootAppDetail/spring-boot-app-detail?orgId=1&${influxdb:queryparam}&var-app=${__field.labels.appName}&var-env=${__field.labels.appEnv}&var-host=${__field.labels.appHost}&${__url_time_range}"
+            }
+          ],
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "id": 11,
+      "interval": "1m",
+      "maxDataPoints": 100,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "sum"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "sortBy": "Total",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_gc_pause\")\n  |> filter(fn: (r) => r[\"_field\"] == \"sum\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env:regex}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host:regex}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app:regex}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"histogram\")\n  |> group(columns: [\"appName\",\"appEnv\",\"appHost\",\"_measurement\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false, timeSrc: \"_start\")",
+          "refId": "jvm_gc_pause"
+        }
+      ],
+      "title": "GC Pause",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${influxdb}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "displayName": "${__field.labels.appName} : ${__field.labels.appEnv} : ${__field.labels.appHost}",
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "Detail Metrics",
+              "url": "http://localhost:3000/d/springBootAppDetail/spring-boot-app-detail?orgId=1&${influxdb:queryparam}&var-app=${__field.labels.appName}&var-env=${__field.labels.appEnv}&var-host=${__field.labels.appHost}&${__url_time_range}"
+            }
+          ],
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "id": 13,
+      "interval": "1m",
+      "maxDataPoints": 100,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "sortBy": "Mean",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"jvm_threads_live\")\n  |> filter(fn: (r) => r[\"_field\"] == \"value\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env:regex}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host:regex}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app:regex}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"gauge\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false, timeSrc: \"_start\")\n  |> toInt()",
+          "refId": "jvm_threads_live"
+        }
+      ],
+      "title": "Threads",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${influxdb}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "displayName": "${__field.labels.appName} : ${__field.labels.appEnv} : ${__field.labels.appHost}",
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "Detail Metrics",
+              "url": "http://localhost:3000/d/springBootAppDetail/spring-boot-app-detail?orgId=1&${influxdb:queryparam}&var-app=${__field.labels.appName}&var-env=${__field.labels.appEnv}&var-host=${__field.labels.appHost}&${__url_time_range}"
+            }
+          ],
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 16
+      },
+      "id": 15,
+      "interval": "1m",
+      "maxDataPoints": 100,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "sum"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "sortBy": "Total",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"http_server_requests\")\n  |> filter(fn: (r) => r[\"_field\"] == \"count\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env:regex}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host:regex}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app:regex}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"histogram\")\n  |> group(columns: [\"appName\",\"appEnv\",\"appHost\",\"_measurement\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false, timeSrc: \"_start\")",
+          "refId": "http_server_requests"
+        }
+      ],
+      "title": "Request Rate",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${influxdb}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "displayName": "${__field.labels.appName} : ${__field.labels.appEnv} : ${__field.labels.appHost}",
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "Detail Metrics",
+              "url": "http://localhost:3000/d/springBootAppDetail/spring-boot-app-detail?orgId=1&${influxdb:queryparam}&var-app=${__field.labels.appName}&var-env=${__field.labels.appEnv}&var-host=${__field.labels.appHost}&${__url_time_range}"
+            }
+          ],
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 16
+      },
+      "id": 17,
+      "interval": "1m",
+      "maxDataPoints": 100,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "sum"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "sortBy": "Total",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdb}"
+          },
+          "query": "import \"date\"\n\nfrom(bucket: \"app\")\n  |> range(start: date.truncate(t: v.timeRangeStart, unit:v.windowPeriod), stop: date.truncate(t: v.timeRangeStop, unit:v.windowPeriod))\n  |> filter(fn: (r) => r[\"_measurement\"] == \"http_server_requests\")\n  |> filter(fn: (r) => r[\"_field\"] == \"sum\")\n  |> filter(fn: (r) => r[\"appEnv\"] =~ /${env:regex}/)\n  |> filter(fn: (r) => r[\"appHost\"] =~ /${host:regex}/)\n  |> filter(fn: (r) => r[\"appName\"] =~ /${app:regex}/)\n  |> filter(fn: (r) => r[\"metric_type\"] == \"histogram\")\n  |> group(columns: [\"appName\",\"appEnv\",\"appHost\",\"_measurement\"])\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false, timeSrc: \"_start\")",
+          "refId": "http_server_requests"
+        }
+      ],
+      "title": "Request Duration",
+      "transparent": true,
+      "type": "timeseries"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "InfluxDB",
+          "value": "InfluxDB"
+        },
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "influxdb",
+        "options": [],
+        "query": "influxdb",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "influxdb",
+          "uid": "${influxdb}"
+        },
+        "definition": "import \"influxdata/influxdb/schema\"\n\nschema.tagValues(\n  bucket: \"app\",\n  tag: \"appName\",\n  predicate: (r) => r[\"appName\"] =~ /.*-sb/\n)",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "app",
+        "options": [],
+        "query": "import \"influxdata/influxdb/schema\"\n\nschema.tagValues(\n  bucket: \"app\",\n  tag: \"appName\",\n  predicate: (r) => r[\"appName\"] =~ /.*-sb/\n)",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "influxdb",
+          "uid": "${influxdb}"
+        },
+        "definition": "import \"influxdata/influxdb/schema\"\n\nschema.tagValues(\n  bucket: \"app\",\n  tag: \"appEnv\",\n  predicate: (r) => r[\"appName\"] =~ /${app:regex}/\n)",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "env",
+        "options": [],
+        "query": "import \"influxdata/influxdb/schema\"\n\nschema.tagValues(\n  bucket: \"app\",\n  tag: \"appEnv\",\n  predicate: (r) => r[\"appName\"] =~ /${app:regex}/\n)",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "influxdb",
+          "uid": "${influxdb}"
+        },
+        "definition": "import \"influxdata/influxdb/schema\"\n\nschema.tagValues(\n  bucket: \"app\",\n  tag: \"appHost\",\n  predicate: (r) => r[\"appName\"] =~ /${app:regex}/ and r[\"appEnv\"] =~ /${env:regex}/\n)",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "host",
+        "options": [],
+        "query": "import \"influxdata/influxdb/schema\"\n\nschema.tagValues(\n  bucket: \"app\",\n  tag: \"appHost\",\n  predicate: (r) => r[\"appName\"] =~ /${app:regex}/ and r[\"appEnv\"] =~ /${env:regex}/\n)",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "2023-05-20T17:00:00.000Z",
+    "to": "2023-05-20T18:00:00.000Z"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Spring Boot App Overview",
+  "uid": "springBootAppOverview",
+  "version": 20,
+  "weekStart": ""
+}
